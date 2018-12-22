@@ -1,0 +1,457 @@
+Debate.org Dataset 
+=====================
+
+This dataset contains a collection of debates from October of 2007 until November
+of 2017 drawn from debate.org along with comprehensive user profile information. 
+
+Authors:  Esin Durmus (ed459@cornell.edu)
+		  Claire Cardie (cardie@cs.cornell.edu)
+
+Updated: 09/20/18
+Version 2.0.
+
+
+** We provide the description, formatting and some examples from the dataset to make it as easy as possible to understand. However, the dataset includes many kinds of  information and it may not be possible to explain all the aspects of it in this readme. Please feel free to contact for any questions/concerns/ideas.
+
+** The examples provided below may not represent the real data. 
+
+Contact: Esin Durmus (ed459@cornell.edu)
+
+** Please cite the following paper if you are using this dataset. 
+
+Citation : @inproceedings{durmus2018exploring,
+  title={Exploring the Role of Prior Beliefs for Argument Persuasion},
+  author={Durmus, Esin and Cardie, Claire},
+  booktitle={Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers)},
+  volume={1},
+  pages={1035--1045},
+  year={2018}
+}
+
+
+Files
+=======
+debates.json : JSON file containing information about the debates. 
+users.json :  JSON file containing information about the users.
+data_release.readme.txt : This readme file.
+
+
+
+1. Description of the debate data 
+==============================================
+This section explains the information contained in debates.json
+
+1.1 DEBATE PARTICIPANT INFORMATION
+======================================
+Each debate has two participants from opposing sides (one is supportive of the claim (i.e., PRO) and the other is against the claim (i.e., CON)). In the end of the voting period, one of the participants is declared as winner (unless there is a tie). 
+
+1.2. DEBATE ROUNDS 
+=====================
+Each debate consists of a sequence of ROUNDS in which two debaters from opposing sides (one is supportive of the claim (i.e., PRO) and the other is against the claim (i.e., CON)) provide their arguments. Each debater has a single change in a ROUND to make his/her points. 
+
+
+1.3. DEBATE COMMENTS 
+=====================
+Each debate includes comments from the audience. Any user with a profile on the website (including the participants of the debates) can write comments for the debates.
+
+1.4. DEBATE VOTES
+=====================
+Each debate includes votes from the audience determining which debater is more successful evaluating the debaters according to following criteria: debaters’ conduct, their spelling and grammar, the convincingness of their arguments and the
+reliability of the sources they refer to. Besides this, the voters state which debater they agree with before and after the debate. 
+
+1.5. DEBATE METADATA
+========================
+
+Metadata for each debate includes debate category, debate status, debate start date, debate update date, debate voting style, number of views for the debate, and if any debater forfeits during the debate or not. 
+
+
+1.6. DEBATE DATA FORMAT
+========================
+
+Debates are structured as a dictionary. There are 77655 debates in total. 
+
+>>> import json
+>>> with open("debates.json", "r") as f:
+...     debates = json.load(f)
+...
+>>> number_of_debates=len(debates)
+>>> number_of_debates
+77655
+
+
+>> preschool_debate=debates['Preschool-Is-A-Waste-Of-Time/1/']
+
+>> preschool_debate.keys() # each debate is stored as a dictionary with following keys
+
+	dict_keys(['url', 'category', 'title', 'comments', 'votes', 'rounds', 'forfeit_label', 'forfeit_side', 'start_date', 'update_date', 'voting_style', 'debate_status', 'number_of_comments', 'number_of_views', 'number_of_rounds', 'number_of_votes', 'participant_1_link', 'participant_1_name', 'participant_1_points', 'participant_1_position', 'participant_1_status', 'participant_2_link', 'participant_2_name', 'participant_2_points', 'participant_2_position', 'participant_2_status'])
+
+>> preschool_debate # Example debate
+	
+	{
+		'url': # url of the debate website
+
+			'http://www.debate.org/debates/Preschool-Is-A-Waste-Of-Time/1/',
+		 
+		'category': 'Education',  # Debate category
+		 	
+		 
+		'title':  'Preschool Is A Waste Of Time', #  Debate title
+		 	
+	 	
+	 	'comments': # Comments for the debate, structured as a list of comments. Each comment information is stored in  			# a dictionary. 
+
+	 			[{ 'user_name': 'willbermender', # username of the commenter
+
+				   'time': '5 months ago', # the time when the comment was posted
+
+				   'comment_text': "My wife and I had the same debate before placing both of our children in preschool at different ages. For both, the benefits surfaced within weeks. The interaction with other children at this age, and learning to manage those relationships, learning from other adults with different teaching styles, and resolving conflict, all provided an important base of experience that each one leveraged after preschool. The preschool's curriculum proved to be less relevant. Both of my children's development was accelerated by their preschool experience, and the timing of their experiences was critical to that growth."}, # comment text 
+
+				  ... 
+
+				  {'user_name': 'Mharman',
+				   'time': '1 year ago',
+				   'comment_text': 'Wow. The very first debate. The one that started it all. This page should be considered a website landmark. Thanks to Phil, Crystal, and everyone who works for this website.'}, 
+				 ]
+	   
+	   'votes': # Votes to evaluate each debater, structured as a list of votes. Each vote is stored in a dictionary. 
+
+	   			[
+					{'user_name': 'Midnight1131', # username of the voter. 
+
+		   			 'time': '5 months ago', # when the vote was posted. 
+
+		   			  'votes_map':  # the actual evaluation of each debater for each criterion. It is a map having each 		      # debater name and 'Tied' as keys. The values of the map is either True or        
+		   			  				# False depending if one 			  
+		   			  				# of the debaters is better than the other according to that particular criterion. 
+							
+							{'Phil': {'Agreed with before the debate': False,
+						     'Agreed with after the debate': False,
+						     'Who had better conduct': False,
+						     'Had better spelling and grammar': False,
+						     'Made more convincing arguments': False,
+						     'Used the most reliable sources': False,
+						     'Total points awarded': '0'},
+						    'Crystal': {'Agreed with before the debate': False,
+						     'Agreed with after the debate': False,
+						     'Who had better conduct': False,
+						     'Had better spelling and grammar': False,
+						     'Made more convincing arguments': True, # If True, this particular debater has more 												# convincing arguments. 
+						     'Used the most reliable sources': False,
+						     'Total points awarded': '3'},
+						    'Tied': {'Agreed with before the debate': True,  # If true, the debaters are tied for this 													 # criterion.
+						     'Agreed with after the debate': True,   
+						     'Who had better conduct': True,
+						     'Had better spelling and grammar': True,
+						     'Made more convincing arguments': False,
+						     'Used the most reliable sources': True}}},
+				  	
+				  	{'user_name': 'MindMaster',
+				   	 
+				   	 'time': '7 months ago',
+				     
+				     'votes_map': 
+
+						     {'Phil': {'Agreed with before the debate': False,
+						     'Agreed with after the debate': False,
+						     'Who had better conduct': False,
+						     'Had better spelling and grammar': False,
+						     'Made more convincing arguments': False,
+						     'Used the most reliable sources': False,
+						     'Total points awarded': '0'},
+						    'Crystal': {'Agreed with before the debate': False,
+						     'Agreed with after the debate': False,
+						     'Who had better conduct': False,
+						     'Had better spelling and grammar': False,
+						     'Made more convincing arguments': True,
+						     'Used the most reliable sources': False,
+						     'Total points awarded': '3'},
+						    'Tied': {'Agreed with before the debate': True,
+						     'Agreed with after the debate': True,
+						     'Who had better conduct': True,
+						     'Had better spelling and grammar': True,
+						     'Made more convincing arguments': False,
+						     'Used the most reliable sources': True}}}, 
+				...],
+	    
+	    'rounds': # Structured as list (rounds) of lists (utterances in the rounds). In each round, pro and con 
+	    		  # have only one chance to make their arguments. 
+	    		  # IMPORTANT: If text is 'forfeit' for any round, it means that side did not have any     
+	    		  # utterance for that round. This situtation may exist even when forfeit_label is False. 
+
+	    		[
+	    			[ # Round 1 
+
+	    			{'side': 'Pro',
+				     
+				     'text': '\n  \r\nParents should not send their children to preschool for several reasons. First and foremost, the year is better spent with a full-time parent. In addition, most children will learn very little at preschool. Contrary to claims made by preschool advocates, children are not better equipped because of preschool. They may develop social skills and hand painting skills sooner, however children that miss preschool will quickly catch up before they finish the first grade.'},
+				     
+				     {'side': 'Con',
+				     'text': '\n  \r\nI believe the intention of preschool is misunderstood and that the right school can be an excellent resource for a mother. A child needs to have a place to meet other children, learn to share both attention and their toys and have a place where they can be introduced to the idea of school and what it will be like including getting used to a schedule and being in an environment where an adult other than the parent is in charge. A positive experience at preschool can really help make a comfortable transition for a child by lessening the fears of the unknown.'}],
+				  
+				  [ # Round 2 
+
+				  {'side': 'Pro',
+				    'text': "\n  \r\nAll of the benefits you listed, such as a smoother transition for the child, learning to share, and a lessening of fear can be accomplished in the 1st grade. Preschool doesn't give children a significant advantage in their following year, nor in their later years.  \n  \r\nI don't know where we get this mentality that we need to make transitions easier for children. Or, that we need to lessen the fear factor for children. Doing one or both of these things in fact hurts children by not preparing them. The world is in fact a scary place, and the fear of going to school for the first time is the last thing about which parents should be concerned.  \n  \r\nI also don't think parents should be so willing to part with their young child just so the mother can aquire resources and/or networking."},
+				   
+				   {'side': 'Con',
+				    'text': "\n  \r\nYes, of course these things could be accomplished in 1st grade but most schools have an expectation that a child will come to first grade with these basic skills allowing them to focus on reading and other core fundamentals. If a child is not adjusted to spending time away from his mother or does not know how to play with other children, the child will fall behind not only in learning but will also not know how to establish friendships with other children. We all know that children can be tough on each other. It is important early on for a child to establish bonds with their classmates. No one wants to be the kid that is picked last to play ball. This can have a serious negative impact on the child that will live with him throughout his school years and the rest of his life. ..."}],
+		  ...],
+		 
+		 'forfeit_label': False, # Some debates are annotated by the website as there is a forfeit during the 
+		 						 # debate. For example: 
+		 						 # http://www.debate.org/debates/A-Non-Mental-Reality-Must-Exist/1/ has forfeit.
+		 						 # For this debate, dylancatlow has forfeited round 2. forfeit_label is True if there  # is such forfeit during the debate and False otherwise. 
+
+		 'forfeit_side': 'None', # username of the forfeited side if there is forfeit.
+
+		 'start_date': '10/15/2007',  # start date of the debate
+
+		 'update_date': '10 years ago',  # update date of the debate
+
+		 'voting_style': 'Open',
+
+		 'debate_status': 'Voting Period', 
+
+		 'number_of_comments': '41', 
+
+		 'number_of_views': '19,736 times',
+
+		 'number_of_rounds': '3',
+
+		 'number_of_votes': '92',
+
+		 'participant_1_link': 'http://www.debate.org/Phil/',
+
+		 'participant_1_name': 'Phil',
+
+		 'participant_1_points': 90,
+
+		 'participant_1_position': 'Pro',  # Pro or Con. 
+
+		 'participant_1_status': 'Losing',
+
+		 'participant_2_link': 'http://www.debate.org/Crystal/',
+
+		 'participant_2_name': 'Crystal',
+
+		 'participant_2_points': 261,
+
+		 'participant_2_position': 'Con',
+
+		 'participant_2_status': 'Winning'
+
+	}
+
+** Since duplicate comments and votes are eliminated, number_of_comments or number_of_votes may not always be equal to len(comments) or len(votes) for a particular debate. 
+
+
+2. Description of the user data  
+==============================================
+This section explains the information contained in users.json
+
+The dataset includes very extensive information about the users. In this section, we will explain different types of information about the users.
+
+2.1. USER ACTIVITY INFORMATION
+===================================
+User activity information includes the debates users have participated in, the opinion questions users have asked, the opinion questions users have answered to, the poll votes the users have provided, the poll questions users have asked, last time the users were active, time when the users have became members, last time the users have updated their profiles and their ranking on the website. 
+
+
+2.2. USER DEMOGRAPHICS/BACKGROUND INFORMATION
+================================================
+User demographics/background information includes a user's ethnicity, religious ideology, political ideology, birthday, relationship status, education, income, political party they support, and the president they support. 
+
+** If not already included in the links, append www.debate.org to the beginning of the links to get the actual url. 
+
+>>> import json
+>>> with open("users.json", "r") as f:
+...     users = json.load(f)
+...
+>>> number_of_users=len(users)
+>>> number_of_users
+45348
+
+>> users[“ahuggies30”].keys()
+
+dict_keys(['all_debates', 'big_issues_dict', 'birthday', 'description', 'education', 'elo_ranking', 'email', 'ethnicity', 'friends', 'income', 'interested', 'joined', 'last_online', 'last_updated', 'looking', 'lost_debates', 'number_of_all_debates', 'number_of_lost_debates', 'number_of_tied_debates', 'number_of_won_debates', 'number_of_friends', 'number_of_opinion_arguments', 'number_of_opinion_questions', 'number_of_poll_topics', 'number_of_poll_votes', 'number_of_voted_debates', 'opinion_arguments', 'opinion_questions', 'party', 'percentile', 'political_ideology', 'poll_topics', 'poll_votes', 'president', 'relationship', 'religious_ideology', 'url', 'voted_debates', 'win_ratio', 'won_debates', 'tied_debates’, ‘gender’])
+
+>> users["ahuggies30"]
+				{ 
+					'all_debates':  # the list of the debates the user participated as a DEBATER. (You can use these as 				# the key for debates dictionary to get more information about the debates. )
+
+					              ['Dogs-are-better-than-cats/28/',
+								  'rainbows-dnt-exist-if-you-are-blind/1/',
+								  'EA-worst-gaming-company/1/',
+								  'Is-soccer-a-sport/1/'],
+
+					 'big_issues_dict': # this includes user's opinions on pre-determined debate issues. Opinions can 					   # be Con, Und, Pro, No Opinion(N/O) and Not Saying(N/S). 
+
+							  {'Abortion': 'Con',
+							  'Affirmative Action': 'Und',
+							  'Animal Rights': 'Und',
+							  'Barack Obama': 'Und',
+							  'Border Fence': 'Und',
+							  'Capitalism': 'Und',
+							  'Civil Unions': 'Und',
+							  'Death Penalty': 'Pro',
+							  'Drug Legalization': 'Und',
+							  'Electoral College': 'Und',
+							  'Environmental Protection': 'Und',
+							  'Estate Tax': 'Und',
+							  'European Union': 'Und',
+							  'Euthanasia': 'Und',
+							  'Federal Reserve': 'Und',
+							  'Flat Tax': 'Und',
+							  'Free Trade': 'Und',
+							  'Gay Marriage': 'Con',
+							  'Global Warming Exists': 'Con',
+							  'Globalization': 'Und',
+							  'Gold Standard': 'Und',
+							  'Gun Rights': 'Und',
+							  'Homeschooling': 'Und',
+							  'Internet Censorship': 'Und',
+							  'Iran-Iraq War': 'Und',
+							  'Labor Union': 'Und',
+							  'Legalized Prostitution': 'Und',
+							  'Medicaid & Medicare': 'Und',
+							  'Medical Marijuana': 'Pro',
+							  'Military Intervention': 'Und',
+							  'Minimum Wage': 'Con',
+							  'National Health Care': 'Und',
+							  'National Retail Sales Tax': 'Und',
+							  'Occupy Movement': 'Und',
+							  'Progressive Tax': 'Und',
+							  'Racial Profiling': 'Und',
+							  'Redistribution': 'Und',
+							  'Smoking Ban': 'Und',
+							  'Social Programs': 'Und',
+							  'Social Security': 'Und',
+							  'Socialism': 'Und',
+							  'Stimulus Spending': 'Und',
+							  'Term Limits': 'Und',
+							  'Torture': 'Und',
+							  'United Nations': 'Und',
+							  'War in Afghanistan': 'Und',
+							  'War on Terror': 'Und',
+							  'Welfare': 'Und'},
+
+					 'birthday': '- Private -',
+
+					 'description': '28-year old male in Erie, Pennsylvania, United States.',
+
+					 'education': 'Not Saying',
+
+					 'elo_ranking': '1,933',
+
+					 'email': '- Private -',
+
+					 'ethnicity': 'White',
+
+					 'friends': 'private', #either 'private' or list of username of the friends.
+
+					 'income': 'Not Saying',
+					 
+					 ‘gender’: Male,
+
+					 'interested': 'in Women',
+
+					 'joined': '3 Years Ago',
+
+					 'last_online': '3 Years Ago',
+
+					 'last_updated': '3 Years Ago',
+
+					 'looking': 'Friendship',
+
+					 'lost_debates':  # list of the debates the debater lost. 
+
+					 		['Is-soccer-a-sport/1/'],
+
+					 'number_of_all_debates': '4',
+
+					 'number_of_lost_debates': '1',
+
+					 'number_of_tied_debates': '3',
+
+					 'number_of_won_debates': '0',
+
+					 'number_of_friends': 'private',
+
+					 'number_of_opinion_arguments': '2',
+
+					 'number_of_opinion_questions': '2',
+
+					 'number_of_poll_topics': '1',
+
+					 'number_of_poll_votes': '1',
+
+					 'number_of_voted_debates’: '0',
+
+					 'opinion_arguments': 
+
+					 		[
+					 		
+					 		 {'opinion link': '/opinions/do-you-agree-with-the-supreme-courts-rulings-on-doma-and-prop-8',
+							  'opinion text': 'The Unconstitutionality of Unequal Federal Recognition  DOMA is predicated on the narrow minded conceptions of what counts as marriage - a nod to religious doctrine that violates the Establishment Clause. If we were to claim that the legal interest in state-sanctioned marriage is organization and procreation then only child-rearing families should receive benefits. The unconstitutionality lies in the "inherent" unequal treatment of certain marriages which comes from nothing but prejudice.',
+							  'opinion title': "Do you agree with the Supreme Court's rulings on DOMA and Prop 8?"},
+							 
+							 {'opinion link': '/opinions/in-reference-to-the-recent-horrific-range-rover-biker-incident-did-alexian-lien-have-the-right-to-defend-himself',
+							  'opinion text': "Both parties are at fault  What is it with Americans and perverting the concept of self-defense? You can't place yourself in dangerous situations and then shoot, kill, or harm your way out of it. It was firstly irresponsible of the man to place himself in the middle of the bikers' motorcade - but this isn't necessarily where I fault him most. He should not have bumped into biker's motorcycle - with that, he certainly initiated the violence. Obviously this doesn't justify the heinous retaliation on the bikers' part, but it also prevents the absolution of blame on his. Consequently, I think all parties involved here should face some kind of legal consequence.",
+							  'opinion title': 'In reference to the recent horrific Range Rover-Biker incident, did Alexian Lien have the right to defend himself?'}
+							  
+							  ]
+
+					 'opinion_questions': [
+					 					 {'
+					 					 link': '/opinions/should-we-recognize-march-9th-as-womens-day',
+										  'question text': "Should we recognize March 9th as Women's Day?"
+										  },
+
+										 {
+										 'link': '/opinions/is-there-confusion-over-what-feminism-is',
+										  'question text': 'Is there confusion over what "feminism" is?'
+										  },
+										  
+										  ]
+
+					 'party': 'Republican Party',
+
+					 'percentile': '71.37%',
+
+					 'political_ideology': 'Conservative',
+
+					 'poll_topics': [  # The poll topics the user created
+					 					{
+					 					'link': '/polls/what-should-happen-next-in-ukraine',
+		  								'title': 'What should happen next in Ukraine?'
+		  								}
+
+		  							],  
+
+					 'poll_votes': [ # The user's votes for the poll topics she/he participated in. 
+					 				{
+					 				'vote link': '/polls/who-should-be-the-next-us-president3',
+									 'vote text': 'Hillary Clinton', # the user's response 
+									 'vote title': 'Who should be the next US president ?', # The vote question
+									 'vote explanation': '' # Explanation for user's response. 
+									 }
+									],
+
+					 'president': 'Not Saying',
+					 
+					 'relationship': 'In a Relationship',
+					 
+					 'religious_ideology': 'Christian',
+					 
+					 'url': 'http://www.debate.org/ahuggies30/',
+					 
+					 'voted_debates': [], # list of the debates the debater voted for.
+					 '
+					 win_ratio': '0.00%',
+
+					 'won_debates': [], # list of the debates the debater won. 
+					 
+					 'tied_debates':  # list of the debates the debater had a tie. 
+					 				['Dogs-are-better-than-cats/28/',
+									  'rainbows-dnt-exist-if-you-are-blind/1/',
+									  'EA-worst-gaming-company/1/'],
+	}
