@@ -20,7 +20,13 @@ target_list = ["education", "party", "political_ideology", "religious_ideology",
 Dataset Link:
 https://drive.google.com/drive/folders/1zI5FHBXZhb80LWgsp5Tm8k42qOL_FWsf
 
+########################################################
 
+This is the readme for the big issue embedding.
+package needed:
+genism: pip install -U gensim
+matplotlib: python -m pip install -U pip        python -m pip install -U matplotlib
+sklearn PCA: pip install -U scikit-learn
 
 
 
