@@ -1,5 +1,9 @@
 This is the readme for the simple NN classifier.
 
+#########################################################
+Full Version of Predicting Big Issue (with all language features) is In the arglex file
+#########################################################
+
 Package Requirement:
 from nltk.tokenize import sent_tokenize
 from tqdm import tqdm_notebook as tqdm
