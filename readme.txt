@@ -1,4 +1,5 @@
 This is the readme for the simple NN classifier.
+link to the google doc with descriptions and statistics: https://docs.google.com/document/d/1ryw8R8Tb9vc4QxDe4iqOasjr0Oie8uP_00H00fbV6N8/edit?usp=sharing
 
 #########################################################
 Full Version of Predicting Big Issue (with all language features) is In the arglex file
