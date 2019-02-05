@@ -33,6 +33,12 @@ genism: pip install -U gensim
 matplotlib: python -m pip install -U pip        python -m pip install -U matplotlib
 sklearn PCA: pip install -U scikit-learn
 
+########################################################
+
+This is a readme for predicting political sides:
+
+Here is the link for the data:
+https://drive.google.com/open?id=1GkZAMHG1gcm6mBMvxqg1g1POhgksBxDU
 
 
 
